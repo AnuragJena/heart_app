@@ -4,23 +4,24 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Load your trained model
+# Load the trained model
 model = pickle.load(open("model.pkl", "rb"))
 
 @app.route('/')
-def home():
-    return "Heart Disease Predictor API is Running."
+def index():
+    return "✅ Heart Disease Prediction API is running."
 
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json(force=True)
 
-    # Assume input order: ['age', 'sex', 'cp', 'chol', 'trestbps', 'thalach']
-    input_features = [float(data[col]) for col in ['age', 'sex', 'cp', 'chol', 'trestbps', 'thalach']]
-    prediction = model.predict([input_features])[0]
+    # Required keys
+    keys = ['age', 'sex', 'cp', 'chol', 'trestbps', 'thalach']
+    input_features = [float(data[k]) for k in keys]
 
+    prediction = model.predict([input_features])[0]
     return jsonify({
-        "prediction": str(prediction),
+        "prediction": int(prediction),
         "risk": "High" if prediction == 1 else "Low"
     })
 
