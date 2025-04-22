@@ -4,3 +4,6 @@ pandas
 numpy
 gunicorn
 flask-cors
+seaborn
+matplotlib
+scipy

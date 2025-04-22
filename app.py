@@ -1,33 +1,38 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
-import pickle
+import joblib
 import numpy as np
 
-app = Flask(__name__)
-CORS(app)
+# === Load trained components ===
+model = joblib.load("attention_model.pkl")
+attention = joblib.load("attention_layer.pkl")
+scaler = joblib.load("scaler.pkl")
 
-# Load the trained model
-model = pickle.load(open("model.pkl", "rb"))
+app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return "✅ Heart Disease Prediction API is running."
-
-model = pickle.load(open("model.pkl", "rb"))
+def home():
+    return "Heart Disease Predictor API (with Attention Model) is running."
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json(force=True)
-    print("Received data:", data)
+    try:
+        data = request.get_json(force=True)
+        input_features = [float(data[k]) for k in ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 
+                                                   'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 
+                                                   'ca', 'thal', 'bp_variability', 'bmi', 'diabetes']]
 
-    # Required keys
-    input_features = [float(data[k]) for k in ['age', 'sex', 'cp', 'chol', 'trestbps', 'thalach']]
+        # Preprocess input
+        X_scaled = scaler.transform([input_features])
+        X_attn = attention.transform(X_scaled)
 
-    prediction = model.predict([input_features])[0]
-    return jsonify({
-        "prediction": int(prediction),
-        "risk": "High" if prediction == 1 else "Low"
-    })
+        prediction = model.predict(X_attn)[0]
+
+        return jsonify({
+            "prediction": int(prediction),
+            "risk": "High" if prediction == 1 else "Low"
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)
