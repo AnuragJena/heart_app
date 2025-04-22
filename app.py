@@ -18,6 +18,7 @@ model = pickle.load(open("model.pkl", "rb"))
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json(force=True)
+    print("Received data:", data)
 
     # Required keys
     input_features = [float(data[k]) for k in ['age', 'sex', 'cp', 'chol', 'trestbps', 'thalach']]
