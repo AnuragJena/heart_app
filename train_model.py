@@ -10,7 +10,7 @@ import os
 import joblib
 
 # === Load dataset ===
-dataset_path = "synthetic_novel_heart_data_1.csv"
+dataset_path = "heart_data.csv"
 
 if not os.path.exists(dataset_path):
     print("Dataset not found. Generating synthetic data...")
