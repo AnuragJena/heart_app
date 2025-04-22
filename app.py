@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import joblib
 import numpy as np
+from flask_cors import CORS
 
 # === Load trained components ===
 model = joblib.load("attention_model.pkl")
@@ -8,6 +9,7 @@ attention = joblib.load("attention_layer.pkl")
 scaler = joblib.load("scaler.pkl")
 
 app = Flask(__name__)
+CORS(app) # Enable CORS for all routes
 
 @app.route('/')
 def home():
