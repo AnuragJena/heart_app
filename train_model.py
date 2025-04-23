@@ -1,3 +1,4 @@
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -8,6 +9,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 import joblib
+from attention_module import AdaptiveFeatureAttention
 
 # === Load dataset ===
 dataset_path = "heart_data.csv"
@@ -38,25 +40,6 @@ X_scaled = scaler.fit_transform(X)
 
 # === Train-Test Split ===
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
-
-# === Custom Lightweight Attention-Like Mechanism ===
-class AdaptiveFeatureAttention:
-    def __init__(self):
-        self.feature_scores = None
-
-    def fit(self, X, y):
-        from sklearn.feature_selection import mutual_info_classif
-        self.feature_scores = mutual_info_classif(X, y)
-        self.feature_scores /= np.max(self.feature_scores)
-
-    def transform(self, X):
-        if self.feature_scores is None:
-            raise RuntimeError("Feature scores not computed. Call 'fit' before 'transform'.")
-        return X * self.feature_scores
-
-    def fit_transform(self, X, y):
-        self.fit(X, y)
-        return self.transform(X)
 
 # Apply Adaptive Attention Layer
 attention = AdaptiveFeatureAttention()
