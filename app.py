@@ -34,10 +34,14 @@ def predict():
         input_data = [float(data[feature]) for feature in expected_features]
         input_scaled = scaler.transform([input_data])
         input_attn = attention.transform(input_scaled)
-        prediction = model.predict(input_attn)[0]
-        confidence = model.predict_proba(input_attn)[0][int(prediction)]
+        #prediction = model.predict(input_attn)[0]
+        #confidence = model.predict_proba(input_attn)[0][int(prediction)]
         #Added code for Probability 07-05-2025
+        prediction = model.predict(input_attn)[0]
         probs = model.predict_proba(input_attn)[0]
+        confidence = probs[int(prediction)]
+        #probability = float(probs[1])  # probability of heart disease (class 1)
+        #probs = model.predict_proba(input_attn)[0]
         probability = float(probs[1])  # probability of heart disease (class 1)
 
         return jsonify({
