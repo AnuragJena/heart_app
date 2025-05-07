@@ -36,6 +36,7 @@ def predict():
         input_attn = attention.transform(input_scaled)
         prediction = model.predict(input_attn)[0]
         confidence = model.predict_proba(input_attn)[0][int(prediction)]
+        #Added code for Probability 07-05-2025
 
         return jsonify({
             "prediction": int(prediction),
