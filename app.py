@@ -37,11 +37,15 @@ def predict():
         prediction = model.predict(input_attn)[0]
         confidence = model.predict_proba(input_attn)[0][int(prediction)]
         #Added code for Probability 07-05-2025
+        probs = model.predict_proba(input_attn)[0]
+        probability = float(probs[1])  # probability of heart disease (class 1)
 
         return jsonify({
             "prediction": int(prediction),
             "risk": "High" if prediction == 1 else "Low",
-            "confidence": round(confidence, 2)
+            "confidence": round(confidence, 2),
+            #Added code for Probability 07-05-2025
+            "probability": round(probability, 2)
         })
 
     except Exception as e:
